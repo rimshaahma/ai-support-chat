@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Support</title>
+</head>
+<body>
+    <h1>Live Chat</h1>
+    <div id="chat-box" style="border:1px solid black; padding:10px; height:300px; overflow-y:scroll;"></div>
+    <input type="text" id="username" placeholder="Enter your name">
+    <input type="text" id="message" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        $(document).on('submit', '#chat-form', function(e){
+    e.preventDefault();
+    
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'send_message' %}",  // Make sure this URL exists in urls.py
+        data: {
+            message: $('#message-input').val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response){
+            $('#chat-box').append('<p>' + response.user + ': ' + response.message + '</p>');
+            $('#message-input').val('');
+        },
+        error: function(){
+            alert('Message failed to send!');
+        }
+    });
+});
+
+    </script>
+</body>
+</html>
